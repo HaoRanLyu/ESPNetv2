@@ -7,6 +7,7 @@ import os
 from argparse import ArgumentParser
 from cnn import SegmentationModel as net
 from torch import nn
+import time
 
 
 #============================================
@@ -93,16 +94,17 @@ def evaluateModel(args, model, image_list):
         img = img.transpose((2, 0, 1))
         img_tensor = torch.from_numpy(img)
         img_tensor = torch.unsqueeze(img_tensor, 0)  # add a batch dimension
+        
         if args.gpu:
             img_tensor = img_tensor.cuda()
+
+        start = time.time()
         img_out = model(img_tensor)
+        torch.cuda.synchronize()
+        end = time.time()
+        print(end-start)
 
         classMap_numpy = img_out[0].max(0)[1].byte().cpu().data.numpy()
-        # upsample the feature maps to the same size as the input image using Nearest neighbour interpolation
-        # upsample the feature map from 1024x512 to 2048x1024
-        classMap_numpy = cv2.resize(classMap_numpy, (args.inWidth*2, args.inHeight*2), interpolation=cv2.INTER_NEAREST)
-        if i % 100 == 0 and i > 0:
-            print('Processed [{}/{}]'.format(i, len(image_list)))
 
         name = imgName.split('/')[-1]
 
@@ -119,6 +121,11 @@ def evaluateModel(args, model, image_list):
         if args.cityFormat:
             classMap_numpy = relabel(classMap_numpy.astype(np.uint8))
 
+        # upsample the feature maps to the same size as the input image using Nearest neighbour interpolation
+        # upsample the feature map from 1024x512 to 2048x1024
+        classMap_numpy = cv2.resize(classMap_numpy, (args.inWidth*2, args.inHeight*2), interpolation=cv2.INTER_NEAREST)
+        if i % 100 == 0 and i > 0:
+            print('Processed [{}/{}]'.format(i, len(image_list)))
 
         cv2.imwrite(args.savedir + os.sep + name.replace(args.img_extn, 'png'), classMap_numpy)
 
@@ -148,8 +155,8 @@ def main(args):
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('--model', default="ESPNetv2", help='Model name')
-    parser.add_argument('--data_dir', default="./data", help='Data directory')
-    parser.add_argument('--img_extn', default="png", help='RGB Image format')
+    parser.add_argument('--data_dir', default="./pics", help='Data directory')
+    parser.add_argument('--img_extn', default="jpg", help='RGB Image format')
     parser.add_argument('--inWidth', type=int, default=1024, help='Width of RGB image')
     parser.add_argument('--inHeight', type=int, default=512, help='Height of RGB image')
     parser.add_argument('--savedir', default='./results', help='directory to save the results')
@@ -158,9 +165,9 @@ if __name__ == '__main__':
     parser.add_argument('--s', default=0.5, type=float, help='scale')
     parser.add_argument('--cityFormat', default=True, type=bool, help='If you want to convert to cityscape '
                                                                        'original label ids')
-    parser.add_argument('--colored', default=False, type=bool, help='If you want to visualize the '
+    parser.add_argument('--colored', default=True, type=bool, help='If you want to visualize the '
                                                                    'segmentation masks in color')
-    parser.add_argument('--overlay', default=False, type=bool, help='If you want to visualize the '
+    parser.add_argument('--overlay', default=True, type=bool, help='If you want to visualize the '
                                                                    'segmentation masks overlayed on top of RGB image')
     parser.add_argument('--classes', default=20, type=int, help='Number of classes in the dataset. 20 for Cityscapes')
 

@@ -50,7 +50,6 @@ class EESPNet_Seg(nn.Module):
             x = F.interpolate(x, scale_factor=2, mode='bilinear', align_corners=True)
         return x
 
-
     def forward(self, input):
         out_l1, out_l2, out_l3, out_l4 = self.net(input, seg=True)
         out_l4_proj = self.proj_L4_C(out_l4)
