@@ -242,21 +242,21 @@ if __name__ == '__main__':
 
     parser = ArgumentParser()
     parser.add_argument('--model', default="ESPNetv2", help='Model name')
-    parser.add_argument('--data_dir', default="./city", help='Data directory')
+    parser.add_argument('--data_dir', default="./dataset", help='Data directory')
     parser.add_argument('--inWidth', type=int, default=1024, help='Width of RGB image')
     parser.add_argument('--inHeight', type=int, default=512, help='Height of RGB image')
     parser.add_argument('--scaleIn', type=int, default=1, help='For ESPNet-C, scaleIn=8. For ESPNet, scaleIn=1')
     parser.add_argument('--max_epochs', type=int, default=300, help='Max. number of epochs')
-    parser.add_argument('--num_workers', type=int, default=12, help='No. of parallel threads')
+    parser.add_argument('--num_workers', type=int, default=1, help='No. of parallel threads')
     parser.add_argument('--batch_size', type=int, default=10, help='Batch size. 12 for ESPNet-C and 6 for ESPNet. '
                                                                    'Change as per the GPU memory')
     parser.add_argument('--step_loss', type=int, default=100, help='Decrease learning rate after how many epochs.')
     parser.add_argument('--lr', type=float, default=5e-4, help='Initial learning rate')
-    parser.add_argument('--savedir', default='./results_espnetv2_', help='directory to save the results')
+    parser.add_argument('--savedir', default='./train/results_espnetv2_', help='directory to save the results')
     parser.add_argument('--resume', type=str, default='', help='Use this flag to load last checkpoint for training')  #
-    parser.add_argument('--classes', type=int, default=20, help='No of classes in the dataset. 20 for cityscapes')
+    parser.add_argument('--classes', type=int, default=2, help='No of classes in the dataset. 20 for cityscapes')
     parser.add_argument('--cached_data_file', default='city.p', help='Cached file name')
-    parser.add_argument('--logFile', default='trainValLog.txt', help='File that stores the training and validation logs')
+    parser.add_argument('--logFile', default='train_1227.txt', help='File that stores the training and validation logs')
     parser.add_argument('--pretrained', default='', help='Pretrained ESPNetv2 weights.')
     parser.add_argument('--s', default=1, type=float, help='scaling parameter')
 
