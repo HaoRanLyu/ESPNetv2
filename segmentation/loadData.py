@@ -60,8 +60,8 @@ class LoadData:
                 # we expect the text file to contain the data in following format
                 # <RGB Image>, <Label Image>
                 line_arr = line.split(',')
-                img_file = ((self.data_dir).strip() + '/' + line_arr[0].strip()).strip()
-                label_file = ((self.data_dir).strip() + '/' + line_arr[1].strip()).strip()
+                img_file = ((self.data_dir).strip() + '/JPEGImages/' + line_arr[0].strip()).strip() + ".jpg"
+                label_file = ((self.data_dir).strip() + '/SegmentationClass_L/' + line_arr[1].strip()).strip() + ".png"
                 label_img = cv2.imread(label_file, 0)
                 unique_values = np.unique(label_img)
                 # if you have 255 label in your label files, map it to the background class (19) in the Cityscapes dataset
